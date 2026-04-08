@@ -127,8 +127,49 @@ describe("useWorkItemsData", () => {
       });
     });
 
-    expect(result.current.pageSize).toBe(25);
+    // pageSize is capped at PAGE_SIZE (10) regardless of displayConfig value
+    expect(result.current.pageSize).toBe(10);
     expect(result.current.sortConfig).toEqual({ field: "System.Id", direction: "desc" });
+  });
+
+  it("preserves pageSize when within allowed maximum", () => {
+    const { result } = renderHook(() => useWorkItemsData(null));
+
+    act(() => {
+      result.current.handleToolResult({
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({
+              workItems: [{ id: 1, fields: { "System.Id": 1, "System.Title": "Item" } }],
+              displayConfig: { pageSize: 5 },
+            }),
+          },
+        ],
+      });
+    });
+
+    expect(result.current.pageSize).toBe(5);
+  });
+
+  it("defaults pageSize to PAGE_SIZE when not provided", () => {
+    const { result } = renderHook(() => useWorkItemsData(null));
+
+    act(() => {
+      result.current.handleToolResult({
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({
+              workItems: [{ id: 1, fields: { "System.Id": 1, "System.Title": "Item" } }],
+              displayConfig: {},
+            }),
+          },
+        ],
+      });
+    });
+
+    expect(result.current.pageSize).toBe(10);
   });
 
   // ---- Filtering ----

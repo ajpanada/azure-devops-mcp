@@ -71,7 +71,13 @@ function configureMcpAppsTools(server: McpServer, tokenProvider: () => Promise<s
     ),
     sort: sortSchema,
     suggestedValues: suggestedValuesSchema,
-    pageSize: z.number().optional().default(10).describe("Number of items per page. Defaults to 10. Use higher values (50-100) for bulk review workflows."),
+    pageSize: z
+      .number()
+      .min(1)
+      .max(10)
+      .optional()
+      .default(10)
+      .describe("Number of items per page. Defaults to 10. Maximum is 10 — the UI provides pagination controls for navigating larger result sets."),
   };
 
   // ========== Shared helpers for work items display ==========

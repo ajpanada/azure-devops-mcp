@@ -128,7 +128,7 @@ export function useWorkItemsData(app: App | null) {
     }));
   }, [displayConfig.columns]);
 
-  const pageSize = displayConfig.pageSize ?? PAGE_SIZE;
+  const pageSize = Math.min(displayConfig.pageSize ?? PAGE_SIZE, PAGE_SIZE);
 
   // Derived: filter options
   const filterOptions = useMemo(() => buildFilterOptions(allWorkItems), [allWorkItems]);
